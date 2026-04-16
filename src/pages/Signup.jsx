@@ -20,7 +20,6 @@ const Signup = () => {
       const response = await axios.post('http://localhost:1008/api/auth/signup', formData);
       
       if (response.status === 201) {
-        alert("Account created! Redirecting to login...");
         navigate('/login');
       }
     } catch (err) {

@@ -197,7 +197,7 @@ const Jobs = () => {
                   </button>
 
                   <div className="flex justify-between items-start pr-12">
-                    <div>
+                    <div className='flex flex-col items-start'>
                       <h3 className="text-xl font-bold text-gray-900 group-hover:text-black transition">{job.jobTitle}</h3>
                       <p className="text-gray-500 font-medium mt-1">📍 {job.location} • 🏢 {job.employerId}</p>
                     </div>

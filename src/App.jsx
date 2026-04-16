@@ -1,26 +1,51 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/Login';
-import Signup from './components/Signup';
-import Jobs from './components/Jobs'; // Your main job board page
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import SchedulePage from './pages/SchedulePage';
+import Jobs from './pages/Jobs'; // Import your jobs component
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+
+const Layout = ({ children }) => {
+  const location = useLocation();
+  const authRoutes = ['/login', '/signup'];
+  const showNavbar = !authRoutes.includes(location.pathname);
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {showNavbar && <Navbar />}
+      <div className="flex-grow bg-white">
+        {children}
+      </div>
+      {showNavbar && (
+        <footer className="bg-[#2D2D2D] text-white text-center py-4 text-xs mt-auto">
+          Copyright © 2026 JobSphere. All rights reserved.
+        </footer>
+      )}
+    </div>
+  );
+};
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
+      <Layout>
         <Routes>
-          {/* Default route redirects to Login or Jobs depending on auth */}
-          <Route path="/" element={<Navigate to="/login" />} />
+          {/* Default landing page is now Jobs */}
+          <Route path="/" element={<Navigate to="/jobs" />} />
           
+          {/* Auth Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           
-          {/* The main dashboard you showed in the screenshot */}
+          {/* Main Tabs */}
           <Route path="/jobs" element={<Jobs />} />
+          <Route path="/schedule" element={<SchedulePage />} />
           
-          {/* Future scheduling page */}
-          <Route path="/schedule" element={<div>Scheduling Page Coming Soon</div>} />
+          {/* Placeholder-free links for the rest */}
+          {/* <Route path="/home" element={<div className="p-10">Home Content</div>} />
+          <Route path="/profile" element={<div className="p-10">Profile Content</div>} /> */}
         </Routes>
-      </div>
+      </Layout>
     </Router>
   );
 }

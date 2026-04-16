@@ -4,6 +4,9 @@ import axios from 'axios';
 const SchedulePage = () => {
 
     const [viewDate, setViewDate] = useState(new Date()); // Defaults to today
+const [aiText, setAiText] = useState('');
+
+const [isTyping, setIsTyping] = useState(false);
 
 // Helper to get days in the current viewDate month
 const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
@@ -14,6 +17,7 @@ const year = viewDate.getFullYear();
 const [loading, setLoading] = useState(true);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAIOpen, setIsAIOpen] = useState(false);
     const [editingId, setEditingId] = useState(null); // Track which item is being edited
 const [formData, setFormData] = useState({
   company: '',
@@ -22,6 +26,36 @@ const [formData, setFormData] = useState({
   color: '#B4B9E8',
   notes: '' // New notes field
 });
+
+
+const handleAISubmit = async () => {
+  if (!aiText.trim()) return;
+  
+  setIsTyping(true);
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userId = user?.id || user?._id;
+
+    // Send the raw text to your new AI route
+    const response = await axios.post('http://localhost:1008/api/interview/ai-schedule', {
+      text: aiText,
+      userId: userId
+    });
+
+    // The backend returns the newly created interview object
+    setInterviews([response.data, ...interviews]);
+    
+    // Reset and close
+    setAiText('');
+    setIsAIOpen(false);
+    alert("AI successfully scheduled the interview!");
+  } catch (err) {
+    console.error("AI Schedule failed", err);
+    alert(err.response?.data?.message || "AI couldn't figure that out. Try being more specific.");
+  } finally {
+    setIsTyping(false);
+  }
+};
 
 
 const handleCalendarClick = (day) => {
@@ -61,6 +95,7 @@ const handleCalendarClick = (day) => {
 ];
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
+  const toggleAI = () => setIsAIOpen(!isAIOpen);
 
   const handleOpenAdd = () => {
   setEditingId(null);
@@ -117,17 +152,22 @@ const handleSubmit = async (e) => {
 useEffect(() => {
   const fetchInterviews = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      const userId = user?.id || user?._id;
+      const storedUser = localStorage.getItem('user');
+      if (!storedUser) return;
+
+      const user = JSON.parse(storedUser);
+      const userId = user?.id || user?._id; // Covers both possible ID key names
 
       if (!userId) return;
 
-      const response = await axios.get(`http://localhost:1008/api/interview?userId=${userId}`);
-      
+      // Pass userId as a query parameter (?userId=...)
+      const response = await axios.get(`http://localhost:1008/api/interview`, {
+        params: { userId }
+      });
 
       setInterviews(response.data);
     } catch (err) {
-      console.error("Fetch failed", err);
+      console.error("Fetch failed:", err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
@@ -161,9 +201,6 @@ useEffect(() => {
                   <h3 className="text-2xl font-bold tracking-tight uppercase mb-1">{item.company}</h3>
                   <div className="flex items-center gap-4">
                     <p className="text-sm font-semibold opacity-90">{item.role}</p>
-                    <span className="text-[10px] bg-black/10 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                      📍 Dhaka, Bangladesh
-                    </span>
                   </div>
                 </div>
                 <div className="text-right">
@@ -249,7 +286,7 @@ useEffect(() => {
             </div>
           </button>
 
-          <button className="w-full bg-[#2D2D2D] hover:bg-black text-white p-5 group flex items-center justify-between transition-all">
+          <button onClick={toggleAI} className="w-full bg-[#2D2D2D] hover:bg-black text-white p-5 group flex items-center justify-between transition-all">
             <span className="text-2xl opacity-50 group-hover:opacity-100 transition-opacity">✨</span>
             <div className="text-right">
               <p className="text-[9px] uppercase tracking-widest opacity-60 leading-none mb-1">Automate with</p>
@@ -339,6 +376,65 @@ useEffect(() => {
           </div>
         </div>
       )}
+
+      {isAIOpen && (
+  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+    <div className="bg-slate-900 w-full max-w-xl rounded-2xl border border-indigo-500/50 shadow-[0_0_50px_-12px_rgba(99,102,241,0.5)] overflow-hidden animate-in zoom-in-95 duration-200">
+      
+      {/* Header */}
+      <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+          <h2 className="text-xs font-black uppercase tracking-widest text-indigo-400">AI Scheduler</h2>
+        </div>
+        <button onClick={() => setIsAIOpen(false)} className="text-white/30 hover:text-white transition-colors">✕</button>
+      </div>
+
+      {/* Input Area */}
+      <div className="p-8">
+        <label className="block text-[10px] font-black uppercase text-white/40 mb-2 tracking-widest">Type your schedule request</label>
+        <textarea
+          autoFocus
+          value={aiText}
+          onChange={(e) => setAiText(e.target.value)}
+          placeholder="e.g. Interview with Amazon next Friday for Backend Role..."
+          className="w-full bg-transparent border-none text-white text-xl font-bold focus:ring-0 resize-none h-32 placeholder:text-white/10"
+        />
+        
+        <div className="flex justify-between items-center mt-6">
+          <p className="text-[10px] text-white/30 italic">
+            AI will extract Company, Role, and Date automatically.
+          </p>
+          <button 
+            onClick={handleAISubmit}
+            disabled={!aiText.trim() || isTyping}
+            className={`px-6 py-3 rounded-full font-black uppercase text-xs tracking-tighter transition-all ${
+              isTyping 
+              ? 'bg-slate-800 text-white/20 cursor-not-allowed' 
+              : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-500/20'
+            }`}
+          >
+            {isTyping ? 'Processing...' : 'Schedule with AI'}
+          </button>
+        </div>
+      </div>
+
+      {/* AI Processing Status */}
+      {isTyping && (
+        <div className="bg-indigo-600/10 px-8 py-3 border-t border-indigo-500/20">
+          <div className="flex items-center gap-3">
+            <div className="flex gap-1">
+              <div className="w-1 h-1 bg-indigo-400 rounded-full animate-bounce" />
+              <div className="w-1 h-1 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.2s]" />
+              <div className="w-1 h-1 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.4s]" />
+            </div>
+            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-tight">Analyzing NLP Patterns...</span>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+)}
     </div>
   );
 };

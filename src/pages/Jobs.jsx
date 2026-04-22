@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all'); // 'all' or 'saved'
+
+  const navigate = useNavigate();
 
   // Filter States
   const [search, setSearch] = useState('');
@@ -183,7 +186,7 @@ const Jobs = () => {
               </div>
             ) : jobs.length > 0 ? (
               jobs.map((job) => (
-                <div key={job._id} className="relative group bg-white p-7 rounded-xl shadow-sm border border-gray-100 hover:border-black transition-all hover:shadow-md">
+                <div key={job._id}  onClick={() => navigate(`/jobs/${job._id}`)} className="cursor-pointer relative group bg-white p-7 rounded-xl shadow-sm border border-gray-100 hover:border-black transition-all hover:shadow-md">
                   
                   {/* Bookmark Button */}
                   <button 

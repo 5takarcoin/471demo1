@@ -4,6 +4,11 @@ import SchedulePage from './pages/SchedulePage';
 import Jobs from './pages/Jobs'; // Import your jobs component
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import CoverLetterPage from './pages/CoverLetter';
+import ProfilePage from "./pages/ProfilePage";
+import JobDetailsPage from "./pages/JobDetailsPage";
+
+
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -40,6 +45,11 @@ function App() {
           {/* Main Tabs */}
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/schedule" element={<SchedulePage />} />
+          <Route path="/cover-letter" element={<CoverLetterPage />} />
+          
+<Route path="/profile" element={<ProfilePage />} />
+
+<Route path="/jobs/:jobId" element={<JobDetailsPage />} />
           
           {/* Placeholder-free links for the rest */}
           {/* <Route path="/home" element={<div className="p-10">Home Content</div>} />

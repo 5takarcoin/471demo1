@@ -22,6 +22,7 @@ const avatarUrl = `https://ui-avatars.com/api/?name=${userName}&background=6366f
           {/* <NavLink to="/home" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>Home</NavLink>
           <NavLink to="/profile" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>Profile</NavLink> */}
           <NavLink to="/schedule" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>Schedule</NavLink>
+          <NavLink to="/cover-letter" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>Cover Letter</NavLink>
           <NavLink to="/jobs" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>Jobs</NavLink>
         </div>
 
@@ -33,11 +34,13 @@ const avatarUrl = `https://ui-avatars.com/api/?name=${userName}&background=6366f
             >
               Logout
             </button>
+            <NavLink to="/profile">
             <img 
   src={`https://ui-avatars.com/api/?name=${userName}&background=random&color=fff`} 
   className="w-9 h-9 rounded-full border-2 border-white/20 shadow-lg" 
   alt="User Avatar" 
 />
+  </NavLink>
           </div>
         )}
       </div>

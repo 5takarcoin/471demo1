@@ -28,8 +28,11 @@ const Login = () => {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         
-        // 3. Redirect to your main jobs/search page
-        navigate('/jobs'); 
+        if (response.data.user.role === "employer") {
+          navigate("/employer");
+        } else {
+          navigate("/jobs"); // or wherever applicants go
+        }
       }
     } catch (err) {
       // 4. Handle errors (User not found, Invalid credentials, etc.)
@@ -43,7 +46,7 @@ const Login = () => {
     <div className="min-h-screen bg-[#F0F0F0] flex items-center justify-center font-sans p-4">
       <div className="bg-white p-10 rounded-lg shadow-sm w-full max-w-md border border-gray-200">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          Job <span className="text-gray-500">Sphere</span>
+         <span className="text-black"> Job</span> <span className="text-gray-500">Sphere</span>
         </h1>
         <p className="text-gray-500 mb-8 font-medium">Welcome back! Please enter your details.</p>
         

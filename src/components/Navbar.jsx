@@ -18,13 +18,14 @@ const avatarUrl = `https://ui-avatars.com/api/?name=${userName}&background=6366f
       </div>
 
       <div className="flex items-center gap-8">
+        {user?.role !== 'employer' && (
         <div className="flex gap-8 text-sm font-medium uppercase tracking-wider">
           {/* <NavLink to="/home" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>Home</NavLink>
           <NavLink to="/profile" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>Profile</NavLink> */}
           <NavLink to="/schedule" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>Schedule</NavLink>
-          <NavLink to="/cover-letter" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>Cover Letter</NavLink>
           <NavLink to="/jobs" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>Jobs</NavLink>
-        </div>
+          <NavLink to="/recommendations" className={({ isActive }) => isActive ? activeStyle : inactiveStyle}>AI Recomendations</NavLink>
+        </div>)}
 
         {isLoggedIn && (
           <div className="flex items-center gap-4 pl-8 border-l border-gray-600">

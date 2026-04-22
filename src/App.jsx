@@ -7,6 +7,8 @@ import Signup from './pages/Signup';
 import CoverLetterPage from './pages/CoverLetter';
 import ProfilePage from "./pages/ProfilePage";
 import JobDetailsPage from "./pages/JobDetailsPage";
+import RecommendationsPage from "./pages/RecommendationsPage";
+import EmployerDashboard from "./pages/EmployerDashboard";
 
 
 
@@ -45,11 +47,15 @@ function App() {
           {/* Main Tabs */}
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/schedule" element={<SchedulePage />} />
-          <Route path="/cover-letter" element={<CoverLetterPage />} />
           
 <Route path="/profile" element={<ProfilePage />} />
 
 <Route path="/jobs/:jobId" element={<JobDetailsPage />} />
+
+<Route path="/recommendations" element={<RecommendationsPage />} />
+
+
+<Route path="/employer" element={<EmployerDashboard />} />
           
           {/* Placeholder-free links for the rest */}
           {/* <Route path="/home" element={<div className="p-10">Home Content</div>} />

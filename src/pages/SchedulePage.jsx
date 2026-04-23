@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+import BASE_URL from '../config';
 
 const SchedulePage = () => {
 
@@ -37,7 +38,7 @@ const handleAISubmit = async () => {
     const userId = user?.id || user?._id;
 
     // Send the raw text to your new AI route
-    const response = await axios.post('http://localhost:1008/api/interview/ai-schedule', {
+    const response = await axios.post(`${BASE_URL}/api/interview/ai-schedule`, {
       text: aiText,
       userId: userId
     });
@@ -133,10 +134,10 @@ const handleSubmit = async (e) => {
   try {
     let response;
     if (editingId) {
-      response = await axios.put(`http://localhost:1008/api/interview/${editingId}`, payload);
+      response = await axios.put(`${BASE_URL}/api/interview/${editingId}`, payload);
       setInterviews(interviews.map(i => i._id === editingId ? response.data : i));
     } else {
-      response = await axios.post('http://localhost:1008/api/interview', payload);
+      response = await axios.post(`${BASE_URL}/api/interview`, payload);
       setInterviews([response.data, ...interviews]);
     }
     
@@ -161,7 +162,7 @@ useEffect(() => {
       if (!userId) return;
 
       // Pass userId as a query parameter (?userId=...)
-      const response = await axios.get(`http://localhost:1008/api/interview`, {
+      const response = await axios.get(`${BASE_URL}/api/interview`, {
         params: { userId }
       });
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import BASE_URL from "../config";
 
 export default function RecommendationsPage() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -10,7 +11,7 @@ export default function RecommendationsPage() {
   const [noProfile, setNoProfile] = useState(false);
 
   useEffect(() => {
-    axios.get(`http://localhost:1008/api/jobs/recommendations/${user?.id}`)
+    axios.get(`${BASE_URL}/api/jobs/recommendations/${user?.id}`)
       .then(res => setJobs(res.data.data))
       .catch(err => {
         if (err.response?.status === 404) setNoProfile(true);

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import BASE_URL from '../config';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -21,7 +22,7 @@ const Login = () => {
 
     try {
       // 1. Send data to your backend controller
-      const response = await axios.post('http://localhost:1008/api/auth/login', formData);
+      const response = await axios.post(`${BASE_URL}/api/auth/login`, formData);
 
       // 2. If successful, your controller returns { token, user }
       if (response.data.token) {

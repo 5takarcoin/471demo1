@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import BASE_URL from "../config";
 
 export default function JobDetailsPage() {
   const { jobId } = useParams();
@@ -10,8 +11,33 @@ export default function JobDetailsPage() {
   const [coverLetter, setCoverLetter] = useState("");
   const [generating, setGenerating] = useState(false);
 
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+const handleSend = async (letter) => {
+  setSending(true);
+  try {
+    await axios.post(`${BASE_URL}/api/applications/apply`, {
+      jobId: job._id,
+      applicantId: user?.id,
+      employerId: job.employerId,
+      coverLetter: letter,
+      applicantName: user?.name,
+      jobTitle: job.jobTitle,
+    });
+    setSent(true);
+  } catch (err) {
+    if (err.response?.data?.message === "Already applied to this job") {
+      alert("You have already applied to this job!");
+    } else {
+      alert("Failed to send application");
+    }
+  }
+  setSending(false);
+};
+
   useEffect(() => {
-    axios.get(`http://localhost:1008/api/jobs/${jobId}`)
+    axios.get(`${BASE_URL}/api/jobs/${jobId}`)
       .then(res => setJob(res.data.data || res.data))
       .catch(err => console.error(err));
   }, [jobId]);
@@ -19,10 +45,10 @@ export default function JobDetailsPage() {
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      const profileRes = await axios.get(`http://localhost:1008/api/profile/${user?.id}`);
+      const profileRes = await axios.get(`${BASE_URL}/api/profile/${user?.id}`);
       const profile = profileRes.data;
 
-      const res = await axios.post("http://localhost:1008/api/cover-letter/generate", {
+      const res = await axios.post(`${BASE_URL}/api/cover-letter/generate`, {
         jobTitle: job.jobTitle,
         jobDescription: job.description,
         seekerName: user?.name,
@@ -105,13 +131,17 @@ export default function JobDetailsPage() {
           </button>
 
           {coverLetter && (
-            <button
-              onClick={() => handleSend(coverLetter)}
-              className="border border-gray-200 rounded-lg px-4 py-2.5 text-sm hover:bg-gray-50"
-            >
-              Send
-            </button>
-          )}
+  <button
+    onClick={() => handleSend(coverLetter)}
+    disabled={sending || sent}
+    className={`border rounded-lg px-4 py-2.5 text-sm transition-colors
+      ${sent 
+        ? "border-green-200 bg-green-50 text-green-700" 
+        : "border-gray-200 hover:bg-gray-50"}`}
+  >
+    {sending ? "Sending..." : sent ? "✓ Sent!" : "Send"}
+  </button>
+)}
         </div>
       </div>
 

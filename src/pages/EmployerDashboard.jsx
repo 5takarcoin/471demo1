@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import BASE_URL from "../config";
 
-const BASE = "http://localhost:1008";
+const BASE = `${BASE_URL}`;
 
 export default function EmployerDashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -49,7 +50,7 @@ export default function EmployerDashboard() {
  const handleSchedule = async () => {
   setScheduling(true);
   try {
-    await axios.post(`http://localhost:1008/api/interview`, {
+    await axios.post(`${BASE_URL}/api/interview`, {
       applicantId: selectedApplicant.applicantId,
       employerId: user?.id,
       jobId: selectedApplicant.jobId,

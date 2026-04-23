@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import BASE_URL from "../config";
 
 export default function CoverLetterGenerator({ job, seekerProfile }) {
   const [coverLetter, setCoverLetter] = useState("");
@@ -11,10 +12,10 @@ export default function CoverLetterGenerator({ job, seekerProfile }) {
     const user = JSON.parse(localStorage.getItem("user"));
 
     // fetch profile first
-    const profileRes = await axios.get(`http://localhost:1008/api/profile/${user?.id}`);
+    const profileRes = await axios.get(`${BASE_URL}/api/profile/${user?.id}`);
     const profile = profileRes.data;
 
-    const res = await axios.post("http://localhost:1008/api/cover-letter/generate", {
+    const res = await axios.post(`${BASE_URL}/api/cover-letter/generate`, {
       jobTitle: job.title,
       jobDescription: job.description,
       seekerName: user?.name,

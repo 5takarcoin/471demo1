@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import BASE_URL from '../config';
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -24,8 +25,8 @@ const Jobs = () => {
       
       // Determine which endpoint to hit based on the active tab
       const endpoint = activeTab === 'all' 
-        ? 'http://localhost:1008/api/search/search' 
-        : `http://localhost:1008/api/search/bookmarks/${user?.id}`;
+        ? `${BASE_URL}/api/search/search` 
+        : `${BASE_URL}/api/search/bookmarks/${user?.id}`;
 
       try {
         const response = await axios.get(endpoint, {
@@ -71,7 +72,7 @@ const Jobs = () => {
     );
 
     try {
-      const response = await axios.post('http://localhost:1008/api/search/bookmarks/toggle', {
+      const response = await axios.post(`${BASE_URL}/api/search/bookmarks/toggle`, {
         jobId,
         userId: user.id
       });

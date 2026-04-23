@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import BASE_URL from "../config";
 
 export default function ProfilePage() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -13,7 +14,7 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    axios.get(`http://localhost:1008/api/profile/${user?.id}`)
+    axios.get(`${BASE_URL}/api/profile/${user?.id}`)
       .then(res => setProfile(res.data))
       .catch(() => {});
   }, []);
@@ -33,7 +34,7 @@ export default function ProfilePage() {
   const handleSave = async () => {
     setLoading(true);
     try {
-      await axios.post("http://localhost:1008/api/profile/upsert", {
+      await axios.post(`${BASE_URL}/api/profile/upsert`, {
         userId: user?.id, ...profile,
       });
       setSaved(true);
